@@ -68,7 +68,7 @@ public class BDSIR extends BirthDeathSkylineModel {
 
         // todo: add check that intervaltimes make sense (removed for BDSIR in bdsky to allow seasonality)
 
-        T = origin.get().getValue();
+        T = origin.get().getArrayValue();
         ntaxa = treeInput.get().getLeafNodeCount();
 
     }
@@ -79,7 +79,7 @@ public class BDSIR extends BirthDeathSkylineModel {
 
         super.updateRatesAndTimes(tree);
 
-        T = origin.get().getValue();
+        T = origin.get().getArrayValue();
         ntaxa = tree.getLeafNodeCount();
 
         S0 = (S0_input.get().getArrayValue());
@@ -97,7 +97,7 @@ public class BDSIR extends BirthDeathSkylineModel {
 
         double time;
 
-        Double[] birthSIR = new Double[dim];
+        double[] birthSIR = new double[dim];
         double I = 1.;
         double R = 0.;
 
@@ -106,7 +106,7 @@ public class BDSIR extends BirthDeathSkylineModel {
         int initialSeason = season;
 
         if (isSeasonal.get())
-            birth[1] = transform ? (reproductiveNumberInput.get().getArrayValue(1) * becomeUninfectiousRate.get().getArrayValue()) : birthRate.get().getValue(1);
+            birth[1] = transform ? (reproductiveNumberInput.get().getArrayValue(1) * becomeUninfectiousRate.get().getArrayValue()) : birthRate.get().getArrayValue(1);
 
         birthSIR[0] = birth[season] / S0 * cumS;
         for (int i = 0; i < dim - 1; i++) {
@@ -136,7 +136,7 @@ public class BDSIR extends BirthDeathSkylineModel {
     /**
      * @param birthSIR
      */
-    public void adjustBirthRates(Double[] birthSIR) {
+    public void adjustBirthRates(double[] birthSIR) {
 
         for (int i = 0; i < totalIntervals; i++) {
             birth[i] = birthSIR[birthChanges > 0 ? index(times[i], birthRateChangeTimes) : 0];
