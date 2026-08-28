@@ -37,13 +37,14 @@ public class BDSIRTest {
                 "Re", new SkylineVectorParameter(null, new RealParameter("2.5")),
                 "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
                 "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")));
-
-        bdsir.initByName(
+                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
                 "S0", new RealParameter("1000."),
-                "tree", tree,
                 "dS", new RealParameter("100. 200."),
-                "dR", new RealParameter("10. 20."),
+                "dR", new RealParameter("10. 20.")
+        );
+        bdsirParam.setBDSIR(bdsir);
+        bdsir.initByName(
+                "tree", tree,
                 "parameterization", bdsirParam);
 
 
@@ -68,13 +69,14 @@ public class BDSIRTest {
                 "Re", new SkylineVectorParameter(null, new RealParameter("2.5")),
                 "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
                 "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")));
-
-        bdsir.initByName(
+                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
                 "S0", new RealParameter("10000."),
-                "tree", tree,
                 "dS", new RealParameter("1000. 1000."),
-                "dR", new RealParameter("100. 200."),
+                "dR", new RealParameter("100. 200.")
+                );
+        bdsirParam.setBDSIR(bdsir);
+        bdsir.initByName(
+                "tree", tree,
                 "parameterization", bdsirParam);
 
 
@@ -101,13 +103,14 @@ public class BDSIRTest {
                 "Re", new SkylineVectorParameter(null, new RealParameter("2.5")),
                 "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
                 "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")));
-
-        bdsir.initByName(
+                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
                 "S0", new RealParameter("1000."),
-                "tree", tree,
                 "dS", new RealParameter("100. 200."),
-                "dR", new RealParameter("10. 20."),
+                "dR", new RealParameter("10. 20.")
+                );
+        bdsirParam.setBDSIR(bdsir);
+        bdsir.initByName(
+                "tree", tree,
                 "parameterization", bdsirParam);
 
 
@@ -130,13 +133,14 @@ public class BDSIRTest {
                 "Re", new SkylineVectorParameter(null, new RealParameter("5")),
                 "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
                 "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.01")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")));
-
-        bdsir.initByName(
+                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
                 "S0", new RealParameter("1000."),
-                "tree", tree,
                 "dS", new RealParameter("100. 200."),
-                "dR", new RealParameter("10. 20."),
+                "dR", new RealParameter("10. 20.")
+                );
+        bdsirParam.setBDSIR(bdsir);
+        bdsir.initByName(
+                "tree", tree,
                 "parameterization", bdsirParam);
 
 
@@ -160,13 +164,14 @@ public class BDSIRTest {
                 "Re", new SkylineVectorParameter(null, new RealParameter("1.5")),
                 "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
                 "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")));
-
-        bdsir.initByName(
+                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
                 "S0", new RealParameter("1000."),
-                "tree", tree,
                 "dS", new RealParameter("100. 200."),
-                "dR", new RealParameter("10. 20."),
+                "dR", new RealParameter("10. 20.")
+                );
+        bdsirParam.setBDSIR(bdsir);
+        bdsir.initByName(
+                "tree", tree,
                 "parameterization", bdsirParam);
 
 
@@ -184,5 +189,36 @@ public class BDSIRTest {
         System.out.println("Scenarion 1: logP: " + logP + " && logPtruth: ~ " + logPtruth);
         assert(Math.abs(logP-logPtruth)/Math.abs(0.5*(logP+logPtruth))<1e-4);
 
+
+        //----------------------------------------Test 6(same tree as Test 3)------------------------------------------------------------
+        bdsirParam.initByName(
+                "processLength", new RealParameter("50."),
+                "Re", new SkylineVectorParameter(null, new RealParameter("2")),
+                "becomeUninfectiousRate", new SkylineVectorParameter(new RealParameter("25"), new RealParameter("0.2 0.3")),
+                "samplingProportion", new SkylineVectorParameter(new RealParameter("25"), new RealParameter("1.0 0.10")),
+                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
+                "S0", new RealParameter("1000."),
+                "dS", new RealParameter("100. 200. 300."),
+                "dR", new RealParameter("20. 20.")
+                );
+        bdsirParam.setBDSIR(bdsir);
+        bdsir.initByName(
+                "tree", tree,
+                "parameterization", bdsirParam);
+
+
+        logP = bdsir.calculateTreeLogLikelihood(tree);
+
+        // Convert from oriented to labeled tree probability density(BDMM-Prime), remove for the older bdsky‘s version 1.5.1
+        internalNodeCount = tree.getLeafNodeCount() - tree.getDirectAncestorNodeCount() - 1;
+        logP -= Math.log(2) * internalNodeCount;
+        logP += Gamma.logGamma(tree.getLeafNodeCount() + 1);
+
+
+        // logP computed from BDSIR from phylodynamics version 1.5.0 based on bdsky version 1.5.1 for comparison during BEAST3 migration
+        logPtruth = -146.82527511714437;
+        //bdsirParam.printRates(); //testing results
+        System.out.println("Scenarion 1: logP: " + logP + " && logPtruth: ~ " + logPtruth);
+        assert(Math.abs(logP-logPtruth)/Math.abs(0.5*(logP+logPtruth))<1e-4);
     }
 }
