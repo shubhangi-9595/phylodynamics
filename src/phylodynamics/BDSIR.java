@@ -37,7 +37,6 @@ public class BDSIR extends BirthDeathMigrationDistribution {
     public double[] birth;
     public double[] times;
     public int totalIntervals;
-    public double[] birthRateChangeTimes;
     public double[] birthSIR;
     int birthChanges;
     public boolean treeConsistent = true;
@@ -46,8 +45,9 @@ public class BDSIR extends BirthDeathMigrationDistribution {
 
     @Override
     public void initAndValidate() {
-        bdsirParameterization = (BDSIRParameterization) parameterizationInput.get();
-        bdsirParameterization.setBDSIR(this);
+
+        bdsirParameterization = (BDSIRParameterization) parameterizationInput.get(); // To make S0_input, etc. reachable. Parameterization is otherwise private in BirthDeathMigrationDistribution.
+        bdsirParameterization.setBDSIR(this); // Parameterization can now see BDSIR
 
         S0 = (bdsirParameterization.S0_input.get().getArrayValue());
 
@@ -57,27 +57,25 @@ public class BDSIR extends BirthDeathMigrationDistribution {
         birthChanges = dim - 1;
         birth = new double[dim];
 
-
-
-        // T for building interval boundaries
+        // T for building interval boundaries.bdsky's origin.
         T = bdsirParameterization.processLengthInput.get().getArrayValue();
 
-        bdsirParameterization.initAndValidate();
         super.initAndValidate();
 
-        //if (transform) {
-        //    if (reproductiveNumberInput.get().getDimension() != 1 && !isSeasonal.get())// || becomeUninfectiousRate.get().getDimension() != 1 || samplingProportion.get().getDimension() != 1)
-        //        throw new RuntimeException("R0, becomeUninfectiousRate and samplingProportion have to be 1-dimensional!");
-        // } else {
-        //    if (birthRate.get().getDimension() != 1 && !isSeasonal.get())//  || death.length != 1 || psi.length != 1)
-        //        throw new RuntimeException("Birth, death and sampling rate have to be 1-dimensional!");
-        //}
+        /*if (bdsirParameterization.ReInput.get() != null && bdsirParameterization.becomeUninfectiousRateInput.get() != null && bdsirParameterization.samplingProportionInput.get() != null) {
+            if (bdsirParameterization.ReInput.get != 1 && !bdsirParameterization.isSeasonal.get())// || becomeUninfectiousRate.get().getDimension() != 1 || samplingProportion.get().getDimension() != 1)
+            {
+                throw new RuntimeException("R0, becomeUninfectiousRate and samplingProportion have to be 1-dimensional!");
+            } else {
+                if (bdsirParameterization.getBirthRates().length != 1 && !bdsirParameterization.isSeasonal.get())//  || death.length != 1 || psi.length != 1)
+                    throw new RuntimeException("Birth, death and sampling rate have to be 1-dimensional!");
+            }
+        }*/
 
         // todo: add check that intervaltimes make sense (removed for BDSIR in bdsky to allow seasonality)
 
-        T = bdsirParameterization.processLengthInput.get().getArrayValue();
+        T = bdsirParameterization.processLengthInput.get().getArrayValue(); //
         ntaxa = treeInput.get().getLeafNodeCount();
-
     }
 
 
@@ -89,7 +87,10 @@ public class BDSIR extends BirthDeathMigrationDistribution {
         S0 = (bdsirParameterization.S0_input.get().getArrayValue());
 
         dS = bdsirParameterization.m_dS.get().getValues();
-
+        times = bdsirParameterization.getIntervalEndTimes();
+        totalIntervals = bdsirParameterization.getTotalIntervalCount();
+        dim = dS.length;
+        birthChanges = dim -1;
         dE = (bdsirParameterization.m_dE.get() != null) ? bdsirParameterization.m_dE.get().getValues() : (new Double[dS.length]);
         if (dE[0] == null) Arrays.fill(dE, 0.);
 
@@ -130,7 +131,8 @@ public class BDSIR extends BirthDeathMigrationDistribution {
         if (cumS < 0 || S0 - cumS < treeInput.get().getLeafNodeCount() || S0 != (cumS + I + R))
             return Double.NEGATIVE_INFINITY;
 
-        //adjustBirthRates(birthSIR);
+        birth = new double[totalIntervals]; // resize to merged Intervals
+        adjustBirthRates(birthSIR);
         return 0.;
 
     }
@@ -139,15 +141,18 @@ public class BDSIR extends BirthDeathMigrationDistribution {
      * @param birthSIR
      */
     public void adjustBirthRates(double[] birthSIR) {
-        // for (int i = 0; i < totalIntervals; i++) {
-        //    birth[i] = birthSIR[birthChanges > 0 ? index(times[i], birthRateChangeTimes) : 0];
-        // System.out.println("totalIntervals: " + totalIntervals + " dim: " + dim);
+        //System.out.println("totalIntervals: " + totalIntervals + "      dim: " + dim);
+        //System.out.println("ReInput.get().getChangeTimes():" + java.util.Arrays.toString(bdsirParameterization.ReInput.get().getChangeTimes()));
+        //System.out.println("getDeathRateChangeTimes():" + java.util.Arrays.toString(bdsirParameterization.getDeathRateChangeTimes()));
+        //System.out.println("getBirthRateChangeTimes():" + java.util.Arrays.toString(bdsirParameterization.getBirthRateChangeTimes()));
 
         for (int i = 0; i < totalIntervals; i++) {
-            birth[i] = birthSIR[birthChanges > 0 ? index(times[i], birthRateChangeTimes) : 0];
+            birth[i] = birthSIR[birthChanges > 0 ? index(times[i], bdsirParameterization.ReInput.get().getChangeTimes()) : 0];
+            //System.out.println("birth[" + times[i] + "]: " + birth[i] );
         }
     }
 
+    /* To find which interval does t fall into. The method was earlier present in bdsky */
     public int index(double t, double[] times) {
         int epoch = java.util.Arrays.binarySearch(times, t);
 
@@ -160,6 +165,7 @@ public class BDSIR extends BirthDeathMigrationDistribution {
     public double calculateTreeLogLikelihood(TreeInterface tree) {
         return super.calculateTreeLogLikelihood(tree);
     }
+
 
     // The method was earlier present in bdsky
     public int lineageCountAtTime(double time, TreeInterface tree) {
@@ -177,23 +183,14 @@ public class BDSIR extends BirthDeathMigrationDistribution {
     int getSeason(double time) {   // this assumes that the second minus first change time entry in the xml defines the length of a season
 
         double seasonLength = bdsirParameterization.getBirthRateChangeTimes()[1] - bdsirParameterization.getBirthRateChangeTimes()[0];
-
         double t = (time - bdsirParameterization.getBirthRateChangeTimes()[0]);
-
         return (int) Math.floor(1 + t / seasonLength) % 2;
 
     }
 
 
-    //public Boolean isBDSIR() {
-    //    return true;
-    //}
-
     public Boolean isSeasonalBDSIR() {
         return bdsirParameterization.isSeasonal.get();
     }
 
-    //public int getSIRdimension() {
-    //    return dim;
-    //}
 }

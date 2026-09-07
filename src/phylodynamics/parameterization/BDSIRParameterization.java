@@ -22,67 +22,42 @@ public class BDSIRParameterization extends EpiParameterization{
 
     public Input<Boolean> isSeasonal = new Input<Boolean>("isSeasonal", "Is this a SeasonalSIRSEpidemic? default false", false);
 
-    private BDSIR bdsir;
+    private BDSIR bdsir; // set using setBDSIR method. getBirthRateValues needs bdsir.birth
 
     public void setBDSIR(BDSIR bdsir_) {
         this.bdsir = bdsir_;
+        requiresRecalculation();
     }
 
     @Override
     public void initAndValidate() {
-        if (bdsir == null)
-            return;
-        intervalEndTimes = null;
-        storedIntervalEndTimes = null;
-        birthRates = null;
+        intervalEndTimes = null; // protected in bdmmprime.parameterization
+        birthRates = null; // protected in bdmmprime.parameterization
         super.initAndValidate();
     }
 
 
     @Override
-    public double[] getBirthRateChangeTimes() {
-        // same as bdsky‘s getChangeTimes() -> equidistant intervals over the processLength
-        int numChanges = Math.max(bdsir.dim-1 , 0);
-        double intervalWidth = getTotalProcessLength()/bdsir.dim;
-        double[] changeTimes = new double[numChanges];
-        for (int i =0; i < numChanges; i++)
-            changeTimes[i] = intervalWidth*(i+1);
-
-        bdsir.birthRateChangeTimes = changeTimes;
-        Double result = bdsir.updateRatesAndTimes(bdsir.treeInput.get());
-        bdsir.treeConsistent = (result != Double.NEGATIVE_INFINITY);
-        return changeTimes;
-    }
-
-    @Override
     public double[] getBirthRateValues(double time) {
-        if(time == intervalEndTimes[0]) {
-            bdsir.times = intervalEndTimes;
-            bdsir.totalIntervals = intervalEndTimes.length;
-            if (bdsir.birth.length != bdsir.totalIntervals)
-                bdsir.birth = new double[bdsir.totalIntervals];
-            bdsir.adjustBirthRates(bdsir.birthSIR);
-        }
+        if(bdsir == null)
+            return ZERO_VALUE_ARRAY;
 
-        return new double[]{bdsir.birth[bdsir.index(time, intervalEndTimes)]};
+        if (time == intervalEndTimes[0]) { // to avoid updateRatesAndTimes running intervalEndTimes.len times
+            Double result = bdsir.updateRatesAndTimes(bdsir.treeInput.get());
+        }
+        return new double[]{bdsir.birth[bdsir.index(time, bdsir.times)]};
     }
 
     @Override
-    protected boolean requiresRecalculation(){
-        dirty = true;
-        return true;
+    public double[] getIntervalEndTimes() {
+        return intervalEndTimes;
     }
 
-    /*
-    public  void printRates() {
-        System.out.println("TIMES: " + java.util.Arrays.toString(bdsir.times));
-        System.out.println("BIRTH: " + java.util.Arrays.toString(bdsir.birth));
-        System.out.println("birthRateChangeTimes: " + java.util.Arrays.toString(bdsir.birthRateChangeTimes));
-        System.out.println("DEATH: " +   java.util.Arrays.deepToString(getDeathRates()));
-        System.out.println("deathRateChangeTimes: " + java.util.Arrays.toString(getDeathRateChangeTimes()));
-        System.out.println("psi: " +    java.util.Arrays.deepToString(getSamplingRates()));
-        System.out.println("samplingRateChangeTimes: " + java.util.Arrays.toString(getSamplingRateChangeTimes()));
-    }*/
+    @Override
+    public int getTotalIntervalCount() {
+        return intervalEndTimes.length;
+    }
+
 
     @Override
     public boolean valuesAreValid(){
@@ -90,7 +65,7 @@ public class BDSIRParameterization extends EpiParameterization{
             return true;
         }
         else{
-           return false;
-         }
+            return false;
+        }
     }
 }
