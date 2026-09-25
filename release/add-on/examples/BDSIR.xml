@@ -26,7 +26,7 @@
 			</samplingProportion>
 			<parameter name="S0" id="S0" value="1000" lower="1"/>
 			<removalProb spec="bdmmprime.parameterization.SkylineVectorParameter">
-				<parameter name="skylineValues" id="removalProb" value="0.1"/>
+				<parameter name="skylineValues" id="removalProb" value="1.0"/>
 			</removalProb>
 		</parameterization>
 	</BDSIR>
@@ -65,7 +65,7 @@
 	</distribution>
 
 
-	<run chainLength="100000" id="mcmc" spec="MCMC" storeEvery="10000">
+	<run chainLength="1000000" id="mcmc" spec="MCMC" storeEvery="10000">
      
 		<state id="state" storeEvery="10000">
 			<stateNode idref="reproductiveNumber"/>
