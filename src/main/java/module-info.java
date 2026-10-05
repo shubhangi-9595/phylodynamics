@@ -1,16 +1,7 @@
 open module phylodynamics {
     requires beast.pkgmgmt;
     requires beast.base;
-	requires bdmmprime;
-    requires beast.fx;
-    requires org.apache.commons.statistics.distribution;
-    requires org.antlr.antlr4.runtime;
-    requires com.google.common;
-    requires commons.math3;
-    requires javafx.controls;
-    requires colt;
-    requires hipparchus.core;
-    	
+
     exports phylodynamics;
     exports phylodynamics.epidemiology;
     exports phylodynamics.evolution.operators;
@@ -35,6 +26,6 @@ open module phylodynamics {
         phylodynamics.epidemiology.Volz2009TreeDistribution,
         phylodynamics.evolution.operators.MultiScaleOperator,
         phylodynamics.evolution.operators.ScaleOffsetOperator,
-        phylodynamics.evolution.tree.coalescent.StochasticCoalescentSkyline;
-        phylodynamics.phylodynamics.parameterization.BDSIRParameterization;
+        phylodynamics.evolution.tree.coalescent.StochasticCoalescentSkyline,
+	phylodynamics.parameterization.BDSIRParameterization;
 }
