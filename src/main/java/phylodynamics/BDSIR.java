@@ -5,7 +5,7 @@ import beast.base.core.Description;
 import bdmmprime.distribution.BirthDeathMigrationDistribution;
 import phylodynamics.parameterization.BDSIRParameterization;
 import beast.base.evolution.tree.TreeInterface;
-import org.apache.commons.math.special.Gamma; // not needed
+// import org.apache.commons.math3.special.Gamma; //When calculating the old loglikelihood(comparable to BDSIR)
 
 import java.util.Arrays;
 
@@ -48,16 +48,16 @@ public class BDSIR extends BirthDeathMigrationDistribution {
         bdsirParameterization = (BDSIRParameterization) parameterizationInput.get(); // To make S0_input, etc. reachable. Parameterization is otherwise private in BirthDeathMigrationDistribution.
         bdsirParameterization.setBDSIR(this); // Parameterization can now see BDSIR
 
-        S0 = (bdsirParameterization.S0_input.get().getArrayValue());
+        S0 = (bdsirParameterization.S0_input.get().get());
 
-        dS = bdsirParameterization.m_dS.get().getValues();
+        dS = bdsirParameterization.m_dS.get().getElements().toArray(new Double[0]);
         dim = dS.length;
 
         birthChanges = dim - 1;
         birth = new double[dim];
 
         // T for building interval boundaries.bdsky's origin.
-        T = bdsirParameterization.processLengthInput.get().getArrayValue();
+        T = bdsirParameterization.processLengthInput.get().get();
 
         super.initAndValidate();
 
@@ -73,29 +73,29 @@ public class BDSIR extends BirthDeathMigrationDistribution {
 
         // todo: add check that intervaltimes make sense (removed for BDSIR in bdsky to allow seasonality)
 
-        T = bdsirParameterization.processLengthInput.get().getArrayValue(); //
+        T = bdsirParameterization.processLengthInput.get().get(); //
         ntaxa = treeInput.get().getLeafNodeCount();
     }
 
 
     public Double updateRatesAndTimes(TreeInterface tree) {
 
-        T = bdsirParameterization.processLengthInput.get().getArrayValue();
+        T = bdsirParameterization.processLengthInput.get().get();
 
         ntaxa = tree.getLeafNodeCount();
 
-        S0 = (bdsirParameterization.S0_input.get().getArrayValue());
+        S0 = (bdsirParameterization.S0_input.get().get());
 
-        dS = bdsirParameterization.m_dS.get().getValues();
+        dS = bdsirParameterization.m_dS.get().getElements().toArray(new Double[0]);
         times = bdsirParameterization.getIntervalEndTimes();
         totalIntervals = bdsirParameterization.getTotalIntervalCount();
         dim = dS.length;
         birthChanges = dim -1;
         BRchangeTimes = bdsirParameterization.getBirthRateChangeTimes();
-        dE = (bdsirParameterization.m_dE.get() != null) ? bdsirParameterization.m_dE.get().getValues() : (new Double[dS.length]);
+        dE = (bdsirParameterization.m_dE.get() != null) ? bdsirParameterization.m_dE.get().getElements().toArray(new Double[0]) : (new Double[dS.length]);
         if (dE[0] == null) Arrays.fill(dE, 0.);
 
-        dR = bdsirParameterization.m_dR.get().getValues();
+        dR = bdsirParameterization.m_dR.get().getElements().toArray(new Double[0]);
 
         double cumS = S0 - 1;
 

@@ -1,6 +1,9 @@
 open module phylodynamics {
     requires beast.pkgmgmt;
     requires beast.base;
+    requires bdmmprime;
+    requires commons.math3;
+    requires java.desktop;
 
     exports phylodynamics;
     exports phylodynamics.epidemiology;

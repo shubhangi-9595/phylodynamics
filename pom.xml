@@ -41,6 +41,8 @@
         <beast.args/>
         <beast.pkg.name>phylodynamics</beast.pkg.name>
         <beast.pkg.version>3.0.0</beast.pkg.version>
+		<commons-math4-legacy.version>4.0-beta1</commons-math4-legacy.version>
+
     </properties>
 
     <repositories>
@@ -133,6 +135,13 @@
             <groupId>io.github.tgvaughan</groupId>
             <artifactId>bdmm-prime</artifactId>
             <version>3.0.0</version>
+        </dependency>
+		
+        <!-- Commons Math 4 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-legacy</artifactId>
+            <version>${commons-math4-legacy.version}</version>
         </dependency>
         
         <dependency>
