@@ -4,11 +4,14 @@ import beast.base.inference.CalculationNode;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Loggable;
-import beast.base.inference.parameter.RealParameter;
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.analysis.solvers.BrentSolver;
+import beast.base.spec.type.RealScalar;
+import beast.base.spec.domain.Real;
+//import beast.base.inference.parameter.RealParameter;
+//import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.exception.NoBracketingException;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.ode.ContinuousOutputModel;
 
 import java.io.PrintStream;
@@ -24,22 +27,22 @@ import java.util.List;
 @Description("A coalescent approach for SIR model")
 public abstract class CoalescentSIR extends CalculationNode implements Loggable {
 
-    public Input<RealParameter> betaParameter = new Input<RealParameter>("beta",
+    public Input<RealScalar<? extends Real>> betaParameter = new Input<>("beta",
             "the mass action rate of infection.");
 
-    public Input<RealParameter> R0 =
-            new Input<RealParameter>("R0", "The basic reproduction number");
+    public Input<RealScalar<? extends Real>> R0 =
+            new Input<>("R0", "The basic reproduction number");
 
-    public Input<RealParameter> gammaParameter = new Input<RealParameter>("gamma",
+    public Input<RealScalar<? extends Real>> gammaParameter = new Input<>("gamma",
             "the per-infected rate of recovery + sampling rate.", Input.Validate.REQUIRED);
 
-    public Input<RealParameter> growthRateParameter = new Input<RealParameter>("g",
+    public Input<RealScalar<? extends Real>> growthRateParameter = new Input<>("g",
             "the growth rate g = (beta*S0) - gamma");
 
-    public Input<RealParameter> n_S_Parameter = new Input<RealParameter>("n_S0",
+    public Input<RealScalar<? extends Real>> n_S_Parameter = new Input<>("n_S0",
             "the number of susceptibles at time of origin (defaults to 1000).", Input.Validate.REQUIRED);
 
-    public Input<RealParameter> originParameter = new Input<RealParameter>("origin",
+    public Input<RealScalar<? extends Real>> originParameter = new Input<>("origin",
             "the time before the root that the first infection occurred.", Input.Validate.REQUIRED);
 
     public Input<Integer> integrationStepCount = new Input<Integer>("integrationStepCount",
@@ -68,7 +71,8 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
 
     @Override
     public void initAndValidate() {
-        if (betaParameter.get() != null) {
+        //setBounds is no longer present
+        /*if (betaParameter.get() != null) {
             betaParameter.get().setBounds(
                     Math.max(0.0, betaParameter.get().getLower()),
                     betaParameter.get().getUpper());
@@ -102,7 +106,7 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
             originParameter.get().setBounds(
                     Math.max(0.0, originParameter.get().getLower()),
                     originParameter.get().getUpper());
-        }
+        }*/
 
         effectivePopSizeTraj = new ArrayList<Double>();
         intensityTraj = new ArrayList<Double>();
@@ -119,12 +123,12 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
      */
     public double beta() {
         if (betaParameter.get() != null) {
-            return betaParameter.get().getValue();
+            return betaParameter.get().get();
         } else if (growthRateParameter.get() == null) {
-            return R0.get().getValue() * gammaParameter.get().getValue() / n_S_Parameter.get().getValue();
+            return R0.get().get() * gammaParameter.get().get() / n_S_Parameter.get().get();
         } else {
-            return (growthRateParameter.get().getValue() + gammaParameter.get().getValue())
-                    / n_S_Parameter.get().getValue();
+            return (growthRateParameter.get().get() + gammaParameter.get().get())
+                    / n_S_Parameter.get().get();
         }
     }
 
@@ -134,14 +138,14 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
      */
     private double R0() {
         if (R0.get() != null) {
-                return R0.get().getValue();
+                return R0.get().get();
         } else {
             if (growthRateParameter.get() != null) {
-                double gamma = gammaParameter.get().getValue();
-                double g = growthRateParameter.get().getValue();
+                double gamma = gammaParameter.get().get();
+                double g = growthRateParameter.get().get();
                 return (g + gamma) / gamma;
             } else {
-                return betaParameter.get().getValue() * n_S_Parameter.get().getValue() / gammaParameter.get().getValue();
+                return betaParameter.get().get() * n_S_Parameter.get().get() / gammaParameter.get().get();
             }
         }
     }
@@ -151,7 +155,7 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
         if (!dirty)
             return reject;
 
-        return simulateTrajectory(beta(), gammaParameter.get().getValue(), n_S_Parameter.get().getValue());
+        return simulateTrajectory(beta(), gammaParameter.get().get(), n_S_Parameter.get().get());
     }
     
     /**
@@ -174,7 +178,7 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
      */
     public boolean simulateTrajectory() {
         return simulateTrajectory(beta(),
-                gammaParameter.get().getValue(), n_S_Parameter.get().getValue());
+                gammaParameter.get().get(), n_S_Parameter.get().get());
     }
 
     /**
@@ -219,10 +223,10 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
         if (t < tIntensityTrajStart) {
             return -(tIntensityTrajStart - t) / effectivePopSizeTraj.get(0);
         } else {
-            if (t > originParameter.get().getValue() + 0.5 * dt) {
+            if (t > originParameter.get().get() + 0.5 * dt) {
                 return
                         intensityTraj.get(intensityTraj.size() - 1)
-                                + (t - originParameter.get().getValue() + 0.5 * dt) * 1e10;
+                                + (t - originParameter.get().get() + 0.5 * dt) * 1e10;
             } else {
                 // Return linear interpolation between values at surrounding
                 // lattice points
@@ -244,22 +248,20 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
         update();
                 
         // given a value for the intensity, find a time
-        UnivariateRealFunction intensityFunction = new UnivariateRealFunction() {
+        UnivariateFunction intensityFunction = new UnivariateFunction() {
 
             @Override
-            public double value(double x) throws FunctionEvaluationException {
+            public double value(double x) {
                 return getIntensity(x) - intensity;
             }
         };
 
         BrentSolver solver = new BrentSolver();
         try {
-            return solver.solve(intensityFunction, 0, n_S_Parameter.get().getValue() / beta());
-        } catch (MaxIterationsExceededException e) {
-            throw new RuntimeException("Max iterations (" + e.getMaxIterations() + ") exceeded:" + e.getMessage());
-        } catch (FunctionEvaluationException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+            return solver.solve(100, intensityFunction, 0, n_S_Parameter.get().get() / beta());
+        } catch (TooManyEvaluationsException e) {
+            throw new RuntimeException("Max iterations (" + e.getMax() + ") exceeded:" + e.getMessage());
+        } 
     }
 
     @Override
@@ -366,7 +368,7 @@ public abstract class CoalescentSIR extends CalculationNode implements Loggable 
         for (int i=0; i<trajLength; i++) {
             sb.append(String.format("%g %g %g %g %g %g\n",
                     i*dt,
-                    originParameter.get().getValue() - i*dt,
+                    originParameter.get().get() - i*dt,
                     NStraj.get(i),
                     NItraj.get(i),
                     effectivePopSizeTraj.get(trajLength-1-i),

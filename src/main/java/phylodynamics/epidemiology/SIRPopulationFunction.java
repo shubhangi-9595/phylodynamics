@@ -1,5 +1,6 @@
 package phylodynamics.epidemiology;
 
+import beast.base.core.BEASTObject;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
@@ -44,10 +45,10 @@ public class SIRPopulationFunction extends PopulationFunction.Abstract {
     public List<String> getParameterIds() {
 
         String[] parameterIds = new String[]{
-                volzSIR.get().R0.get().getID(),
-                volzSIR.get().originParameter.get().getID(),
-                volzSIR.get().n_S_Parameter.get().getID(),
-                volzSIR.get().gammaParameter.get().getID(),
+                ((BEASTObject)volzSIR.get().R0.get()).getID(),
+                ((BEASTObject)volzSIR.get().originParameter.get()).getID(),
+                ((BEASTObject)volzSIR.get().n_S_Parameter.get()).getID(),
+                ((BEASTObject)volzSIR.get().gammaParameter.get()).getID(),
         };
 
         return Arrays.asList(parameterIds);

@@ -42,7 +42,7 @@ public class Volz2009TreeDistribution extends TreeDistribution {
         boolean reject = volzSIRInput.get().update();
 
         // if origin is being sampled it must be constrained to be older than the root of the tree.
-        if (volzSIRInput.get().originParameter.get().getValue() < treeIntervalsInput.get().getTotalDuration()) {
+        if (volzSIRInput.get().originParameter.get().get() < treeIntervalsInput.get().getTotalDuration()) {
             logP = Double.NEGATIVE_INFINITY;
             return logP;
         }
@@ -101,7 +101,7 @@ public class Volz2009TreeDistribution extends TreeDistribution {
 
         // Final calculations, between tMRCA (last interval) and origin (T)
 
-        double T = volzSIRInput.get().originParameter.get().getValue();
+        double T = volzSIRInput.get().originParameter.get().get();
         double u = intervals.getTotalDuration();
         double x = T - u;
 

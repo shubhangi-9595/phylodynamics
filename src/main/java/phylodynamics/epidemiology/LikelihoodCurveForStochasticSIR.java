@@ -1,6 +1,7 @@
 package phylodynamics.epidemiology;
 
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.domain.Real;
 import beast.base.evolution.tree.TreeIntervals;
 import beast.base.evolution.tree.TreeParser;
 
@@ -23,12 +24,12 @@ public class LikelihoodCurveForStochasticSIR {
 
         TreeParser tree = new TreeParser(TRUE_TREE, false);
 
-        RealParameter origin = new RealParameter(new Double[]{TRUE_ORIGIN});
+        RealScalarParam<Real> origin = new RealScalarParam<>(TRUE_ORIGIN, Real.INSTANCE);
 
         TreeIntervals intervals = new TreeIntervals(tree);
 
-        RealParameter n_S0 = new RealParameter(new Double[] {(double)TRUE_NS0});
-        RealParameter beta = new RealParameter(new Double[] {TRUE_BETA});
+        RealScalarParam<Real> n_S0 = new RealScalarParam<>((double)TRUE_NS0, Real.INSTANCE);
+        RealScalarParam<Real> beta = new RealScalarParam<>(TRUE_BETA, Real.INSTANCE);
 
         // read first argument as the output file name, otherwise default to 'likelihoodCurveForStochasticSIR.txt'
         String outfileName = args.length > 0 ? args[0] : "likelihoodCurveForStochasticSIR_" + Nt + ".txt";
@@ -66,7 +67,7 @@ public class LikelihoodCurveForStochasticSIR {
         long startTime = System.currentTimeMillis();
         for (double g = 0.10; g <= 0.80; g += 0.025) {
 
-            RealParameter gamma = new RealParameter(new Double[]{g});
+            RealScalarParam gamma = new RealScalarParam(g, Real.INSTANCE);
 
             writer.print(g );
             System.out.print(g);

@@ -191,7 +191,7 @@ public class DeterministicCoalescentSIR extends CoalescentSIR {
         }
 
         // Start of integral is 0.5*dt from end of forward-time integration.
-        tIntensityTrajStart = originParameter.get().getValue() - dt * (effectivePopSizeTraj.size() - 1) - 0.5 * dt;
+        tIntensityTrajStart = originParameter.get().get() - dt * (effectivePopSizeTraj.size() - 1) - 0.5 * dt;
 
         dirty = false;
 

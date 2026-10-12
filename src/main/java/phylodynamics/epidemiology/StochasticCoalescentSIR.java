@@ -2,7 +2,8 @@ package phylodynamics.epidemiology;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.domain.Real;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +34,9 @@ public class StochasticCoalescentSIR extends CoalescentSIR {
     public StochasticCoalescentSIR() {
     }
 
-    public StochasticCoalescentSIR(RealParameter nSO,
-                                   RealParameter beta, RealParameter gamma,
-                                   RealParameter origin, int integrationStepCount,
+    public StochasticCoalescentSIR(RealScalarParam<Real> nSO,
+                                   RealScalarParam<Real> beta, RealScalarParam<Real> gamma,
+                                   RealScalarParam<Real> origin, int integrationStepCount,
                                    int numSamplesFromTrajectory) throws Exception {
         initByName(
                 "n_S0", nSO,
@@ -68,7 +69,7 @@ public class StochasticCoalescentSIR extends CoalescentSIR {
         boolean minus1 = minusOne.get();
 
         int Ntraj = 1;
-        double T = originParameter.get().getValue();
+        double T = originParameter.get().get();
         //double[] times = {T};
         double[] times = {Double.POSITIVE_INFINITY};
 
