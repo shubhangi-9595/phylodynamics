@@ -1,0 +1,5 @@
+Next Steps:
+
+a) Update Test Files
+b) Update XML Files
+c) Update remaining files in the src folder that need to be updated in order for them to become compatible with BEAST3.
