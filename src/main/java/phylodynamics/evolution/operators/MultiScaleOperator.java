@@ -5,9 +5,11 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.Operator;
+import beast.base.inference.Scalable;
 import beast.base.inference.StateNode;
-import beast.base.inference.parameter.Parameter;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.type.Tensor;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.util.Randomizer;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.Node;
@@ -68,8 +70,8 @@ public class MultiScaleOperator extends Operator {
             if (elementWise.get()) {
                 int size = 0;
                 for (StateNode up : m_parameters.get()) {
-                    if (size == 0) size = up.getDimension();
-                    if (size > 0 && up.getDimension() != size) {
+                    if (size == 0) size = ((Tensor<?, ?>)up).size();
+                    if (size > 0 && ((Tensor<?, ?>)up).size() != size) {
                         throw new RuntimeException("elementWise=true but parameters of differing lengths!");
                     }
                     goingUp += 1;
@@ -79,10 +81,11 @@ public class MultiScaleOperator extends Operator {
                 int index = Randomizer.nextInt(size);
 
                 for (StateNode up : m_parameters.get()) {
-                    if (up instanceof RealParameter) {
-
-                        RealParameter p = (RealParameter) up;
-                        p.setValue(p.getValue(index) * scale);
+                    if (up instanceof RealVectorParam<?> p) {
+                        p.set(index, p.get(index) * scale);
+                    }
+                    if (up instanceof RealScalarParam<?> p){
+                        p.set(p.get(index) * scale);
                     }
                     if (outsideBounds(up)) {
                         return Double.NEGATIVE_INFINITY;
@@ -106,7 +109,7 @@ public class MultiScaleOperator extends Operator {
 //                            return -Math.log(scale);
                             goingUp += 1;
                         } else {
-                            goingUp += up.scale(scale);
+                            goingUp += ((Scalable) up).scale(scale);
                         }
 
                         if (outsideBounds(up)) {
@@ -125,18 +128,12 @@ public class MultiScaleOperator extends Operator {
             return Double.NEGATIVE_INFINITY;
         }
 
-        return (goingUp - 2) * Math.log(scale);
+        return goingUp - 2.0 * Math.log(scale);
     }
 
     private boolean outsideBounds(final StateNode node) {
-        if (node instanceof Parameter<?>) {
-            final Parameter<?> p = (Parameter) node;
-            final Double lower = (Double) p.getLower();
-            final Double upper = (Double) p.getUpper();
-            final Double value = (Double) p.getValue();
-            if (value < lower || value > upper) {
-                return true;
-            }
+        if (node instanceof Tensor<?, ?>) {
+            return true;
         }
         return false;
     }
