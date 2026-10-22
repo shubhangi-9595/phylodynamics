@@ -1,5 +1,22 @@
 Next Steps:
 
-a) Update Test Files
+a) Update Test Files ---> Finished. ">mvn test" produces the following output:
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.267 s -- in test.phylodynamics.BDSIRTest
+[INFO] Running test.phylodynamics.epidemiology.StochasticCoalescentTest
+logP: -1763.2132656998156
+True logP:-1763.206425
+logP: -81.73411986446345
+logPtruth: ~ -81.7
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.777 s -- in test.phylodynamics.epidemiology.StochasticCoalescentTest
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+
+
 b) Update XML Files
 c) Update remaining files in the src folder that need to be updated in order for them to become compatible with BEAST3.
