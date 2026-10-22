@@ -1,6 +1,6 @@
 package test.phylodynamics.epidemiology;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.tree.Tree;

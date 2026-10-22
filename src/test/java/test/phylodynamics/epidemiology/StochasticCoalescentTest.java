@@ -6,7 +6,10 @@
 
 package test.phylodynamics.epidemiology;
 
-import beast.base.inference.parameter.RealParameter;
+//import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.Real;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.evolution.tree.TreeIntervals;
 import beast.base.util.Randomizer;
 import phylodynamics.epidemiology.SIRPopulationFunction;
@@ -19,7 +22,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -49,10 +52,10 @@ public class StochasticCoalescentTest {
         StochasticCoalescentSIR stochasticSIR = new StochasticCoalescentSIR();
         
         stochasticSIR.initByName(
-                "n_S0", new RealParameter(String.valueOf(S0)),
-                "beta", new RealParameter(String.valueOf(beta)),
-                "gamma", new RealParameter(String.valueOf(gamma)),
-                "origin", new RealParameter(String.valueOf(origin)),
+                "n_S0", new RealScalarParam<>(S0, Real.INSTANCE),
+                "beta", new RealScalarParam<>(beta, Real.INSTANCE),
+                "gamma", new RealScalarParam<>(gamma, Real.INSTANCE),
+                "origin", new RealScalarParam<>(origin, Real.INSTANCE),
                 "numSamplesFromTrajectory", latticeSize,
                 "integrationStepCount", latticeSize);
 
@@ -208,10 +211,10 @@ public class StochasticCoalescentTest {
         
         StochasticCoalescentSIR stochasticSIR = new StochasticCoalescentSIR();
         stochasticSIR.initByName(
-                "n_S0", new RealParameter(String.valueOf(S0)),
-                "beta", new RealParameter(String.valueOf(beta)),
-                "gamma", new RealParameter(String.valueOf(gamma)),
-                "origin", new RealParameter(String.valueOf(origin)),
+                "n_S0", new RealScalarParam<>(S0, Real.INSTANCE),
+                "beta", new RealScalarParam<>(beta, Real.INSTANCE),
+                "gamma", new RealScalarParam<>(gamma, Real.INSTANCE),
+                "origin", new RealScalarParam<>(origin, Real.INSTANCE),
                 "integrationStepCount", latticeSize);
         
         StochasticCoalescent stochasticCoalescent = new StochasticCoalescent();

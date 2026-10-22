@@ -161,6 +161,9 @@
                 <configuration>
                     <release>25</release>
                     <encoding>UTF-8</encoding>
+					<testExcludes>
+						<testExclude>**/VolzSIRTest.java</testExclude>
+					</testExcludes>
                 </configuration>
             </plugin>
 

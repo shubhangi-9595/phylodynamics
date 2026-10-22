@@ -2,14 +2,21 @@ package test.phylodynamics;
 
 import beast.base.core.Description;
 import beast.base.evolution.tree.TreeParser;
-import beast.base.inference.parameter.RealParameter;
-import org.apache.commons.math.special.Gamma;
-import org.junit.Test;
+//import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.Real;
+import beast.base.spec.domain.NonNegativeReal;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
+import org.apache.commons.math3.special.Gamma;
+import org.junit.jupiter.api.Test;
 import phylodynamics.BDSIR;
 import bdmmprime.distribution.BirthDeathMigrationDistribution;
 import bdmmprime.parameterization.SkylineVectorParameter;
 import phylodynamics.parameterization.BDSIRParameterization;
 import beast.base.util.Randomizer;
+import beast.base.spec.type.RealScalar;
+import beast.base.spec.type.RealVector;
 
 /**
  * @author Shubhangi Kaushik
@@ -35,15 +42,24 @@ public class BDSIRTest {
         BDSIRParameterization bdsirParam = new BDSIRParameterization();
 
         bdsirParam.initByName(
-                "processLength", new RealParameter("15."),
-                "Re", new SkylineVectorParameter(new RealParameter("7.5"), new RealParameter("2.5 2.5")),
-                "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
-                "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
-                "S0", new RealParameter("1000."),
-                "dS", new RealParameter("100. 200."),
-                "dR", new RealParameter("10. 20.")
+                "processLength", new RealScalarParam<>(15., NonNegativeReal.INSTANCE),
+                "Re", new SkylineVectorParameter(
+                        new RealVectorParam<>(new double[] {7.5}, NonNegativeReal.INSTANCE),
+                        new RealVectorParam<>(new double[] {2.5, 2.5}, NonNegativeReal.INSTANCE)),
+                "becomeUninfectiousRate", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.2}, NonNegativeReal.INSTANCE)),
+                "samplingProportion", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.10}, UnitInterval.INSTANCE)),
+                "removalProb", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {1.0}, UnitInterval.INSTANCE)),
+                "S0", new RealScalarParam<>(1000.0, Real.INSTANCE),
+                "dS", new RealVectorParam<>(new double[] {100., 200}, Real.INSTANCE),
+                "dR", new RealVectorParam<>(new double[] {10., 20.}, Real.INSTANCE)
         );
+
         bdsir.initByName(
                 "tree", tree,
                 "parameterization", bdsirParam);
@@ -73,14 +89,22 @@ public class BDSIRTest {
         BDSIR bdsir = new BDSIR();
         BDSIRParameterization bdsirParam = new BDSIRParameterization();
         bdsirParam.initByName(
-                "processLength", new RealParameter("15."),
-                "Re", new SkylineVectorParameter(new RealParameter("7.5"), new RealParameter("2.5 2.5")),
-                "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
-                "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
-                "S0", new RealParameter("10000."),
-                "dS", new RealParameter("1000. 1000."),
-                "dR", new RealParameter("100. 200.")
+                "processLength", new RealScalarParam<>(15., NonNegativeReal.INSTANCE),
+                "Re", new SkylineVectorParameter(
+                        new RealVectorParam<>(new double[] {7.5}, NonNegativeReal.INSTANCE),
+                        new RealVectorParam<>(new double[] {2.5, 2.5}, NonNegativeReal.INSTANCE)),
+                "becomeUninfectiousRate", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.2}, NonNegativeReal.INSTANCE)),
+                "samplingProportion", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.10}, UnitInterval.INSTANCE)),
+                "removalProb", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {1.0}, UnitInterval.INSTANCE)),
+                "S0", new RealScalarParam<>(10000.0, Real.INSTANCE),
+                "dS", new RealVectorParam<>(new double[] {1000., 1000.}, Real.INSTANCE),
+                "dR", new RealVectorParam<>(new double[] {100., 200.}, Real.INSTANCE)
         );
         bdsir.initByName(
                 "tree", tree,
@@ -113,14 +137,22 @@ public class BDSIRTest {
         BDSIRParameterization bdsirParam = new BDSIRParameterization();
 
         bdsirParam.initByName(
-                "processLength", new RealParameter("30."),
-                "Re", new SkylineVectorParameter(new RealParameter("15"), new RealParameter("2.5 2.5")),
-                "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
-                "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
-                "S0", new RealParameter("1000."),
-                "dS", new RealParameter("100. 200."),
-                "dR", new RealParameter("10. 20.")
+                "processLength", new RealScalarParam<>(30., NonNegativeReal.INSTANCE),
+                "Re", new SkylineVectorParameter(
+                        new RealVectorParam<>(new double[] {15}, NonNegativeReal.INSTANCE),
+                        new RealVectorParam<>(new double[] {2.5, 2.5}, NonNegativeReal.INSTANCE)),
+                "becomeUninfectiousRate", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.2}, NonNegativeReal.INSTANCE)),
+                "samplingProportion", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.10}, UnitInterval.INSTANCE)),
+                "removalProb", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {1.0}, UnitInterval.INSTANCE)),
+                "S0", new RealScalarParam<>(1000.0, Real.INSTANCE),
+                "dS", new RealVectorParam<>(new double[] {100., 200.}, Real.INSTANCE),
+                "dR", new RealVectorParam<>(new double[] {10., 20.}, Real.INSTANCE)
         );
         bdsir.initByName(
                 "tree", tree,
@@ -154,14 +186,22 @@ public class BDSIRTest {
         BDSIRParameterization bdsirParam = new BDSIRParameterization();
 
         bdsirParam.initByName(
-                "processLength", new RealParameter("30."),
-                "Re", new SkylineVectorParameter(new RealParameter("15"), new RealParameter("5 5")),
-                "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
-                "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.01")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
-                "S0", new RealParameter("1000."),
-                "dS", new RealParameter("100. 200."),
-                "dR", new RealParameter("10. 20.")
+                "processLength", new RealScalarParam<>(30., NonNegativeReal.INSTANCE),
+                "Re", new SkylineVectorParameter(
+                        new RealVectorParam<>(new double[] {15}, NonNegativeReal.INSTANCE),
+                        new RealVectorParam<>(new double[] {5, 5}, NonNegativeReal.INSTANCE)),
+                "becomeUninfectiousRate", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.2}, NonNegativeReal.INSTANCE)),
+                "samplingProportion", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.01}, UnitInterval.INSTANCE)),
+                "removalProb", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {1.0}, UnitInterval.INSTANCE)),
+                "S0", new RealScalarParam<>(1000.0, Real.INSTANCE),
+                "dS", new RealVectorParam<>(new double[] {100., 200.}, Real.INSTANCE),
+                "dR", new RealVectorParam<>(new double[] {10., 20.}, Real.INSTANCE)
         );
         bdsir.initByName(
                 "tree", tree,
@@ -196,14 +236,22 @@ public class BDSIRTest {
         BDSIRParameterization bdsirParam = new BDSIRParameterization();
 
         bdsirParam.initByName(
-                "processLength", new RealParameter("50."),
-                "Re", new SkylineVectorParameter(new RealParameter("25"), new RealParameter("1.5 1.5")),
-                "becomeUninfectiousRate", new SkylineVectorParameter(null, new RealParameter("0.2")),
-                "samplingProportion", new SkylineVectorParameter(null, new RealParameter("0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
-                "S0", new RealParameter("1000."),
-                "dS", new RealParameter("100. 200."),
-                "dR", new RealParameter("10. 20.")
+                "processLength", new RealScalarParam<>(50., NonNegativeReal.INSTANCE),
+                "Re", new SkylineVectorParameter(
+                        new RealVectorParam<>(new double[] {25}, NonNegativeReal.INSTANCE),
+                        new RealVectorParam<>(new double[] {1.5, 1.5}, NonNegativeReal.INSTANCE)),
+                "becomeUninfectiousRate", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.2}, NonNegativeReal.INSTANCE)),
+                "samplingProportion", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {0.10}, UnitInterval.INSTANCE)),
+                "removalProb", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {1.0}, UnitInterval.INSTANCE)),
+                "S0", new RealScalarParam<>(1000.0, Real.INSTANCE),
+                "dS", new RealVectorParam<>(new double[] {100., 200.}, Real.INSTANCE),
+                "dR", new RealVectorParam<>(new double[] {10., 20.}, Real.INSTANCE)
         );
         bdsir.initByName(
                 "tree", tree,
@@ -237,14 +285,22 @@ public class BDSIRTest {
         BDSIRParameterization bdsirParam = new BDSIRParameterization();
 
         bdsirParam.initByName(
-                "processLength", new RealParameter("50."),
-                "Re", new SkylineVectorParameter(new RealParameter("16.6666666666666667 33.33333333333333337"), new RealParameter("2.0 2.0 2.0")), // only uses Re[0] for BDSIR
-                "becomeUninfectiousRate", new SkylineVectorParameter(new RealParameter("25"), new RealParameter("0.2 0.3")),
-                "samplingProportion", new SkylineVectorParameter(new RealParameter("25"), new RealParameter("1.0 0.10")),
-                "removalProb", new SkylineVectorParameter(null, new RealParameter("1.0")),
-                "S0", new RealParameter("1000."),
-                "dS", new RealParameter("100. 200. 300."),
-                "dR", new RealParameter("20. 20.")
+                "processLength", new RealScalarParam<>(50., NonNegativeReal.INSTANCE),
+                "Re", new SkylineVectorParameter(
+                        new RealVectorParam<>(new double[] {16.6666666666666667, 33.33333333333333337}, NonNegativeReal.INSTANCE),
+                        new RealVectorParam<>(new double[] {2.0, 2.0, 2.0}, NonNegativeReal.INSTANCE)),
+                "becomeUninfectiousRate", new SkylineVectorParameter(
+                        new RealVectorParam<>(new double[] {25}, NonNegativeReal.INSTANCE),
+                        new RealVectorParam<>(new double[] {0.2, 0.3}, NonNegativeReal.INSTANCE)),
+                "samplingProportion", new SkylineVectorParameter(
+                        new RealVectorParam<>(new double[] {25}, NonNegativeReal.INSTANCE),
+                        new RealVectorParam<>(new double[] {1.0, 0.10}, UnitInterval.INSTANCE)),
+                "removalProb", new SkylineVectorParameter(
+                        null,
+                        new RealVectorParam<>(new double[] {1.0}, UnitInterval.INSTANCE)),
+                "S0", new RealScalarParam<>(1000.0, Real.INSTANCE),
+                "dS", new RealVectorParam<>(new double[] {100., 200., 300.}, Real.INSTANCE),
+                "dR", new RealVectorParam<>(new double[] {20., 20.}, Real.INSTANCE)
                 );
 
         BDSIR bdsir = new BDSIR();
